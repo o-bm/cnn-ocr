@@ -3,7 +3,15 @@ Synthetic data generation of MRZs from passport images
 """
 import random 
 
-SEX_CODES = ["M", "F", "<"]
+
+DOC_TYPES = [
+    ("P", "<"),  # ordinary passport
+    ("P", "D"),  # diplomatic passport (P + subtype D)
+    ("P", "S"),  # service/official passport
+    ("D", "<"),  # pure 'D' diplomatic passport style
+]
+
+DOC_TYPE_WEIGHTS = [85, 8, 5, 2]
 
 NATIONALITY_CODES = [
     # North America
@@ -26,6 +34,7 @@ NATIONALITY_CODES = [
     "XXX",   # stateless / unknown
 ]
 
+
 class Date:
     def __init__(self, year, month, day):
         self.year = year
@@ -46,6 +55,7 @@ def is_leap_year(year):
     """
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
     
+
 def generate_date(start_year, end_year=None):
     """
     Generate a random Date object
@@ -71,12 +81,21 @@ def generate_sex():
     r = random.random()
     return "M" if r < 0.49 else "F" if r < 0.98 else "<"
 
+def generate_doc_type():
+    """
+    Generate a random document type
+    """
+    type, subtype = random.choices(DOC_TYPES, weights=DOC_TYPE_WEIGHTS)[0]
+    return f"{type}{subtype}"
+
+
 def main():
     birthdate = generate_date(1900, 2025)
     expirydate = generate_date(birthdate.year + random.randint(15, 60))
     nationality = random.choice(NATIONALITY_CODES)
     print(birthdate)
     print(expirydate)
+
 
 if __name__ == "__main__":
     main()
