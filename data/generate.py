@@ -177,6 +177,23 @@ def generate_personal_number():
     return "".join(random.choice(ALPHA_NUM) for _ in range(length))
 
 
+def check_digit(data):
+    """
+    The check digits permit readers to verify that data in the MRZ is correctly interpreted
+    """
+    weights = [7, 3, 1]
+    checksum = 0
+    for i in range(len(data)):
+        if data[i] in DIGITS:
+            value = int(data[i])
+        elif data[i] in LETTERS:
+            value = ord(data[i]) - ord('A') + 10
+        else:
+            value = 0 # < 
+        checksum += value * weights[i % 3]
+    return checksum % 10
+
+
 def main():
     birthdate = generate_date(1900, 2025)
     expirydate = generate_date(birthdate.year + random.randint(15, 60))
