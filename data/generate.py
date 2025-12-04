@@ -143,13 +143,6 @@ def generate_name():
     return surname, given_names
 
 
-def build_name(surname, given_names):
-    name_block = surname + "<<" + "<".join(given_names)
-    name_block = name_block.replace(" ", "<")
-    max_len = 39
-    return name_block[:max_len]
-
-
 def generate_document_number():
     """
     Generate a random document number
@@ -194,13 +187,51 @@ def check_digit(data):
     return checksum % 10
 
 
-def main():
-    birthdate = generate_date(1900, 2025)
-    expirydate = generate_date(birthdate.year + random.randint(15, 60))
-    nationality = random.choice(NATIONALITY_CODES)
-    print(birthdate)
-    print(expirydate)
+def build_mrz(): 
+    """
+    Build a valid MRZ string
+    """
+    doc_code = generate_doc_type()
+    issuing = random.choice(NATIONALITY_CODES)
+    surname, given_names = generate_name()
+    name_block = surname + "<<" + "<".join(given_names)
+    name_block = name_block.replace(" ", "<")
+    max_len = 39
+    name_block = name_block[:max_len]
 
+    line1 = f"{doc_code}{issuing}{name_block}"
+    
+
+    doc_number = generate_document_number()
+    doc_number_cd = check_digit(doc_number)
+    nationality = issuing
+    dob = generate_date(1900, 2025)
+    dob_cd = check_digit(dob)
+    sex = generate_sex()
+    expiry_date = generate_date(dob.year + random.randint(15, 60))
+    expiry_date_cd = check_digit(expiry_date)
+    pn = generate_personal_number()
+    pn_field = pn.ljust(14, "<")
+    pn_cd = check_digit(pn)
+    composite_input = (
+        doc_number + str(doc_number_cd) +
+        dob + str(dob_cd) +
+        expiry_date + str(expiry_date_cd) +
+        pn_field + str(pn_cd)
+    )
+    composite_cd = check_digit(composite_input)
+
+    line2 = (
+        f"{doc_number}{doc_number_cd}"
+        f"{nationality}"
+        f"{dob}{dob_cd}"
+        f"{sex}"
+        f"{expiry_date}{expiry_date_cd}"
+        f"{pn_field}{pn_cd}{composite_cd}"
+    )
+    return line1, line2
+    
 
 if __name__ == "__main__":
-    main()
+   line1, line2 = build_mrz()
+   print(line1+line2)
