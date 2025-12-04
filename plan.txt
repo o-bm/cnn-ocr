@@ -1,0 +1,6 @@
+step 1: 
+synthesis data generation of mrz's from passport images
+
+mrz
+type 3 -> passport 
+type 1 & 2 not that common
