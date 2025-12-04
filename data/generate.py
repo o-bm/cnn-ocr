@@ -3,6 +3,9 @@ Synthetic data generation of MRZs from passport images
 """
 import random 
 
+DIGITS = "0123456789"
+LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ALPHA_NUM = DIGITS + LETTERS
 
 DOC_TYPES = [
     ("P", "<"),  # ordinary passport
@@ -32,6 +35,39 @@ NATIONALITY_CODES = [
     "AUS", "NZL",
     # Special
     "XXX",   # stateless / unknown
+]
+
+GIVEN_NAMES = [
+    # Common
+    "ALEX", "ANNA", "JOHN", "MARIA", "DAVID", "EMMA",
+    "NOAH", "LUCAS", "MIA", "LIAM", "OLIVIA", "ETHAN",
+    "DANIEL", "SOFIA", "JAMES", "ISABELLA",
+    # Global
+    "MOHAMMED", "AHMED", "ALI", "SARA", "FATIMA",
+    "HUA", "MEI", "WEI", "JUN", "YUNA",    
+    # Good letter coverage & uniqueness
+    "XAVIER", "QUENTIN", "YARA", "ZOE", "VICTOR",
+    "KAYLA", "JACK", "BRUNO", "PEDRO", "LAURA",
+]
+
+SURNAMES = [
+    # Common Western
+    "SMITH", "JOHNSON", "WILLIAMS", "BROWN", "JONES",
+    "MILLER", "DAVIS", "GARCIA", "RODRIGUEZ", "MARTINEZ",
+    "HERNANDEZ", "LOPEZ", "GONZALEZ", "WILSON", "TAYLOR",
+    
+    # European variety
+    "SCHMIDT", "SCHNEIDER", "MULLER", "WAGNER", "HOFMANN",
+    "DUBOIS", "MOREAU", "LEROY", "ROUSSEAU", "FERRARI",
+    "ROSSI", "RICCI", "CONTI", "ROMANO",
+    
+    # Asian variety
+    "KIM", "LEE", "PARK", "CHOI", "NGUYEN", "TRAN", "PHAM",
+    "SATO", "SUZUKI", "TANAKA",
+    
+    # Good letter coverage
+    "XAVIER", "QUINN", "ZIMMERMAN", "VEGA", "YOUNG", "KING",
+    "FOX", "JACKSON", "BAKER", "CARTER",
 ]
 
 
@@ -74,6 +110,7 @@ def generate_date(start_year, end_year=None):
     day = random.randint(1, max_days)
     return Date(year, month, day)
 
+
 def generate_sex():
     """
     Generate a random sex code
@@ -81,12 +118,63 @@ def generate_sex():
     r = random.random()
     return "M" if r < 0.49 else "F" if r < 0.98 else "<"
 
+
 def generate_doc_type():
     """
     Generate a random document type
     """
     type, subtype = random.choices(DOC_TYPES, weights=DOC_TYPE_WEIGHTS)[0]
     return f"{type}{subtype}"
+
+
+def generate_name():
+    """
+    Generate a random name
+    """
+    surname = random.choice(SURNAMES)
+    r = random.random()
+    if r < 0.70:
+        given_count = 1
+    elif r < 0.95:
+        given_count = 2
+    else:
+        given_count = 3
+    given_names = [random.choice(GIVEN_NAMES) for _ in range(given_count)]
+    return surname, given_names
+
+
+def build_name(surname, given_names):
+    name_block = surname + "<<" + "<".join(given_names)
+    name_block = name_block.replace(" ", "<")
+    max_len = 39
+    return name_block[:max_len]
+
+
+def generate_document_number():
+    """
+    Generate a random document number
+    """
+    r = random.random()
+    if r < 0.7:
+        return "".join(random.choices(DIGITS, k=9))
+    elif r < 0.9:
+        return "".join(random.choices(LETTERS, k=1)) + "".join(random.choices(DIGITS, k=8))
+    else:
+        return "".join(random.choices(LETTERS, k=2)) + "".join(random.choices(DIGITS, k=7))
+
+
+def generate_personal_number():
+    """
+    Generate a random personal number
+    """
+    r = random.random()
+    if r < 0.6:
+        return ""
+    elif r < 0.8:
+        length = random.randint(3, min(7, 14))
+    else:
+        length = random.randint(8, 14)
+    return "".join(random.choice(ALPHA_NUM) for _ in range(length))
 
 
 def main():
