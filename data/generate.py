@@ -3,6 +3,28 @@ Synthetic data generation of MRZs from passport images
 """
 import random 
 
+SEX_CODES = ["M", "F", "<"]
+
+NATIONALITY_CODES = [
+    # North America
+    "USA", "CAN", "MEX",
+    # South America
+    "BRA", "ARG", "COL", "CHL", "PER",
+    # Europe (big + letter coverage)
+    "GBR", "IRL", "FRA", "DEU", "ESP", "PRT",
+    "ITA", "NLD", "BEL", "CHE", "AUT", "SWE",
+    "NOR", "FIN", "DNK", "POL", "CZE", "GRC",
+    # Asia
+    "CHN", "JPN", "KOR", "IND", "PAK", "THA",
+    # Middle East
+    "SAU", "ARE", "QAT", "IRQ", "IRN",
+    # Africa
+    "ZAF", "EGY", "KEN", "NGA",
+    # Oceania
+    "AUS", "NZL",
+    # Special
+    "XXX",   # stateless / unknown
+]
 
 class Date:
     def __init__(self, year, month, day):
@@ -42,10 +64,19 @@ def generate_date(start_year, end_year=None):
     day = random.randint(1, max_days)
     return Date(year, month, day)
 
+def generate_sex():
+    """
+    Generate a random sex code
+    """
+    r = random.random()
+    return "M" if r < 0.49 else "F" if r < 0.98 else "<"
 
 def main():
     birthdate = generate_date(1900, 2025)
     expirydate = generate_date(birthdate.year + random.randint(15, 60))
+    nationality = random.choice(NATIONALITY_CODES)
+    print(birthdate)
+    print(expirydate)
 
 if __name__ == "__main__":
     main()
