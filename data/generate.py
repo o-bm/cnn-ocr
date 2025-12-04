@@ -192,27 +192,36 @@ def build_mrz():
     Build a valid MRZ string
     """
     doc_code = generate_doc_type()
+
     issuing = random.choice(NATIONALITY_CODES)
+
     surname, given_names = generate_name()
     name_block = surname + "<<" + "<".join(given_names)
     name_block = name_block.replace(" ", "<")
     max_len = 39
-    name_block = name_block[:max_len]
+    name_block = name_block[:max_len].ljust(max_len, "<")
 
     line1 = f"{doc_code}{issuing}{name_block}"
     
-
+    assert len(line1) == 44
+    
     doc_number = generate_document_number()
     doc_number_cd = check_digit(doc_number)
+
     nationality = issuing
+
     dob = generate_date(1900, 2025)
-    dob_cd = check_digit(dob)
-    sex = generate_sex()
     expiry_date = generate_date(dob.year + random.randint(15, 60))
+    dob = str(dob)
+    expiry_date = str(expiry_date)
+    dob_cd = check_digit(dob)
     expiry_date_cd = check_digit(expiry_date)
+    
+    sex = generate_sex()
     pn = generate_personal_number()
     pn_field = pn.ljust(14, "<")
-    pn_cd = check_digit(pn)
+    pn_cd = check_digit(pn_field)
+
     composite_input = (
         doc_number + str(doc_number_cd) +
         dob + str(dob_cd) +
@@ -229,9 +238,12 @@ def build_mrz():
         f"{expiry_date}{expiry_date_cd}"
         f"{pn_field}{pn_cd}{composite_cd}"
     )
+
+    assert len(line2) == 44
+
     return line1, line2
     
-
 if __name__ == "__main__":
-   line1, line2 = build_mrz()
-   print(line1+line2)
+   for _ in range(10000):
+    line1, line2 = build_mrz()
+    print(line1+ "\n" + line2 + "\n")
