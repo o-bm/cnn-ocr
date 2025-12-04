@@ -1,6 +1,14 @@
 step 1: 
-synthesis data generation of mrz's from passport images
+synthesis data generation of type 3 mrz's
+
 
 mrz
 type 3 -> passport 
+2 lines x 44 characters 
 type 1 & 2 not that common
+
+mrz chatset 0-9 A-Z and filter character < 
+1st position P 
+2nd position type (for countries with different types of passports)
+3-5 issuing country ISO 3166-1 alpha-3
+
