@@ -1,14 +1,16 @@
 step 1: 
-synthesis data generation of type 3 mrz's
 
+synthesis data generation
+generation of MRZ strings done. data/generate.py
+generator can be factored into class for better modularity and reusability
+antoher class to convert generated -> mrz
+apply transformations to image to be more realistic (noise..)
+python has mrz library, can be used to check if the MRZ is valid
 
-mrz
-type 3 -> passport 
-2 lines x 44 characters 
-type 1 & 2 not that common
+step 2: 
 
-mrz chatset 0-9 A-Z and filter character < 
-1st position P 
-2nd position type (for countries with different types of passports)
-3-5 issuing country ISO 3166-1 alpha-3
+convert generated MRZ strings to image with OCR-B font
+apply transformations to image to be more realistic (noise..)
+take a batch of ~100k? images and split into train, val, test sets
+take a baseline comparison with easyocr and tesseract
 
