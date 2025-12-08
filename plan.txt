@@ -1,4 +1,4 @@
-step 1: 
+Data Generation
 
 synthesis data generation
 generation of MRZ strings done. data/generate.py
@@ -7,10 +7,11 @@ antoher class to convert generated -> mrz
 apply transformations to image to be more realistic (noise..)
 python has mrz library, can be used to check if the MRZ is valid
 
-step 2: 
 
 convert generated MRZ strings to image with OCR-B font
 apply transformations to image to be more realistic (noise..)
 take a batch of ~100k? images and split into train, val, test sets
 take a baseline comparison with easyocr and tesseract
+
+Training & Validation
 
